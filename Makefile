@@ -56,7 +56,7 @@ doccat : $(OUT_BIN)/$(APP_NAME)$(EXE_EXT)
 	@echo --------------------------------------------------------------------------------	
 
 %.run: $(OUT_BIN)/doccat$(EXE_EXT)
-	cd $(subst /,$(PS),$(OUT_BIN)) && ./$(basename $@) -o /tmp/t/out.doc /tmp/t/i3.doc /tmp/t/i1.doc /tmp/t/i2.doc /tmp/t/i3.doc /tmp/t/i2.doc /tmp/t/i1.doc
+	cd sandbox; $(subst /,$(PS),$(OUT_BIN))/$(basename $@) -o out.doc i3.doc i1.doc i2.doc i3.doc i2.doc i1.docx
 
 .PHONY: clean
 clean :

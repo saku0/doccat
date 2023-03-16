@@ -74,40 +74,6 @@ Reference<XComponent> getFile(const char *target, const OUString fileName, Refer
   return xComponent;
 }
 
-void insertToCurrentLocation(Reference<XDesktop2> xDesktop2, OUString fileName,
-        bool gotoEnd=true)
-{
-    Reference<XComponent> xCurrentComponent = xDesktop2->getCurrentComponent();
-
-    // get the XModel interface from the component
-    Reference<XModel> xModel(xCurrentComponent, UNO_QUERY);
-
-    // the model knows its controller
-    Reference<XController> xController = xModel->getCurrentController();
-
-    // the controller gives us the TextViewCursor
-    // query the viewcursor supplier interface
-    Reference<XTextViewCursorSupplier> xViewCursorSupplier(xController, UNO_QUERY);
-
-    // get the cursor
-    Reference<XTextViewCursor> xViewCursor = xViewCursorSupplier->getViewCursor();
-
-    Reference<XText> xDocumentText = xViewCursor->getText();
-
-    Reference<XTextCursor> xModelCursor = xDocumentText->createTextCursorByRange(xViewCursor->getStart());
-
-    if (gotoEnd) xModelCursor->gotoEnd(false);
-    else xModelCursor->gotoStart(false);
-
-    Reference<XDocumentInsertable> doc(xModelCursor, UNO_QUERY);
-
-    static char fileUrl[1024];
-    sprintf(fileUrl, "file://%s", createFileName(charStr(fileName)));
-    const char *fn = fileUrl;
-    fprintf(stdout, "adding document - %s\n", fn);
-    doc->insertDocumentFromURL(OUString::createFromAscii(fn), Sequence <::com::sun::star::beans::PropertyValue>());
-
-}
 
 SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
 {
@@ -155,17 +121,48 @@ SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
     }
 
     // open a text document
-    Reference<XComponent> xComponent = getFile("_blank", OUString("private:factory/swriter"), xDesktop2);
+    Reference<XComponent> xComponent = xDesktop2->loadComponentFromURL(
+      "private:factory/swriter",
+      OUString::createFromAscii("_blank"), 0,
+      Sequence <::com::sun::star::beans::PropertyValue>());
     if (!xComponent.is()) {
-      fprintf(stdout, "opening text document failed!\n");
-      fflush(stdout);
+      fprintf(stdout, "error opening text document\n");
       return -1;
     }
 
+
     Reference<XTextDocument> xTextDocument(xComponent, UNO_QUERY);
 
+    Reference<XComponent> xCurrentComponent = xDesktop2->getCurrentComponent();
+
+    // get the XModel interface from the component
+    Reference<XModel> xModel(xCurrentComponent, UNO_QUERY);
+
+    // the model knows its controller
+    Reference<XController> xController = xModel->getCurrentController();
+
+    // the controller gives us the TextViewCursor
+    // query the viewcursor supplier interface
+    Reference<XTextViewCursorSupplier> xViewCursorSupplier(xController, UNO_QUERY);
+
+    // get the cursor
+    Reference<XTextViewCursor> xViewCursor = xViewCursorSupplier->getViewCursor();
+
+    Reference<XText> xDocumentText = xViewCursor->getText();
+
+    Reference<XTextCursor> xModelCursor = xDocumentText->createTextCursorByRange(xViewCursor->getStart());
+
+    Reference<XDocumentInsertable> doc(xModelCursor, UNO_QUERY);
+
     for (; argv[ai]; ai++) {
-        insertToCurrentLocation(xDesktop2, OUString::createFromAscii(argv[ai]));
+        static char fileUrl[1024];
+        const char *fileName = argv[ai];
+        sprintf(fileUrl, "file://%s", createFileName(fileName));
+        const char *fn = fileUrl;
+        fprintf(stdout, "adding document - %s\n", fn);
+
+        xModelCursor->gotoEnd(false);
+        doc->insertDocumentFromURL(OUString::createFromAscii(fn), Sequence <::com::sun::star::beans::PropertyValue>());
     }
 
     Reference<XStorable> xStorable(xTextDocument, UNO_QUERY);
@@ -178,13 +175,13 @@ SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
     fprintf(stderr, "caught BootstrapException: %s\n",
       OUStringToOString(e.getMessage(), RTL_TEXTENCODING_ASCII_US).getStr());
     fflush(stderr);
-    return 1;
+    return -1;
   }
   catch (Exception& e) {
     fprintf(stderr, "caught UNO exception: %s\n",
         OUStringToOString(e.Message, RTL_TEXTENCODING_ASCII_US).getStr());
     fflush(stderr);
-    return 1;
+    return -1;
   }
 
   return 0;
