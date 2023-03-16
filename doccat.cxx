@@ -16,8 +16,6 @@
 
 #include <com/sun/star/frame/XDesktop.hpp>
 #include <com/sun/star/frame/XStorable.hpp>
-#include <com/sun/star/table/XCell.hpp>
-#include <com/sun/star/table/XCellRange.hpp>
 #include <com/sun/star/text/XText.hpp>
 #include <com/sun/star/text/XTextCursor.hpp>
 #include <com/sun/star/text/XTextDocument.hpp>
@@ -28,7 +26,6 @@
 using namespace rtl;
 using namespace cppu;
 using namespace com::sun::star;
-using namespace com::sun::star::table;
 using namespace com::sun::star::document;
 using namespace com::sun::star::container;
 using namespace com::sun::star::lang;
@@ -57,26 +54,6 @@ const char *createFileName(const char *filename) {
   else sprintf(retval, "%s", filename);
   return retval;
 }
-
-Reference<XComponent> getFile(const char *target, const OUString fileName, Reference<XDesktop2> xDesktop2)
-{
-  const char *name = charStr(fileName);
-
-  // open a text document
-  Reference<XComponent> xComponent = xDesktop2->loadComponentFromURL(
-      fileName,
-      OUString::createFromAscii(target), 0, // _blank
-      Sequence <::com::sun::star::beans::PropertyValue>());
-  if (!xComponent.is()) {
-    fprintf(stdout, "opening text document %s failed!\n", name);
-    exit(1);
-  }
-
-  fprintf(stdout, "opened %s text document...\n", name);
-
-  return xComponent;
-}
-
 
 SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
 {
