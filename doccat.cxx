@@ -1,5 +1,9 @@
 
-/* doccat: concatenate text documents from Word and Writer */
+/*
+ * doccat: concatenate text documents from Word and Writer
+ *
+ * usage: doccat -o output.doc input1.doc input2.doc input3.doc
+*/
 
 #include <stdio.h>
 #include <sal/main.h>
