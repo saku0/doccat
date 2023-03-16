@@ -1,3 +1,6 @@
+
+/* doccat: concatenate text documents from Word and Writer */
+
 #include <stdio.h>
 #include <sal/main.h>
 #include <cppuhelper/bootstrap.hxx>
