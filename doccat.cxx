@@ -20,6 +20,7 @@
 
 #include <com/sun/star/frame/XDesktop.hpp>
 #include <com/sun/star/frame/XStorable.hpp>
+#include <com/sun/star/beans/XPropertySet.hpp>
 #include <com/sun/star/text/XText.hpp>
 #include <com/sun/star/text/XTextCursor.hpp>
 #include <com/sun/star/text/XTextDocument.hpp>
@@ -36,6 +37,7 @@ using namespace com::sun::star::lang;
 using namespace com::sun::star::frame;
 using namespace com::sun::star::text;
 using namespace com::sun::star::uno;
+using namespace com::sun::star::beans;
 
 
 using ::rtl::OString;
@@ -59,6 +61,7 @@ const char *createFileName(const char *filename) {
   return retval;
 }
 
+ 
 SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
 {
   static char fileUrl[1024];
@@ -96,7 +99,7 @@ SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
     }
 
     // Get XDesktop2 from XInterface type (downcast) indirectly using XInterface's queryInterface() method.
-    Reference<XDesktop2> xDesktop2(xDesktop, UNO_QUERY);
+    Reference<XDesktop2> xDesktop2(xDesktop, UNO_QUERY_THROW);
 
     if (!xDesktop2.is()) {
       fprintf(stdout, "Error upcasting XInterface to XDesktop2");
@@ -115,19 +118,19 @@ SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
     }
 
 
-    Reference<XTextDocument> xTextDocument(xComponent, UNO_QUERY);
+    Reference<XTextDocument> xTextDocument(xComponent, UNO_QUERY_THROW);
 
     Reference<XComponent> xCurrentComponent = xDesktop2->getCurrentComponent();
 
     // get the XModel interface from the component
-    Reference<XModel> xModel(xCurrentComponent, UNO_QUERY);
+    Reference<XModel> xModel(xCurrentComponent, UNO_QUERY_THROW);
 
     // the model knows its controller
     Reference<XController> xController = xModel->getCurrentController();
 
     // the controller gives us the TextViewCursor
     // query the viewcursor supplier interface
-    Reference<XTextViewCursorSupplier> xViewCursorSupplier(xController, UNO_QUERY);
+    Reference<XTextViewCursorSupplier> xViewCursorSupplier(xController, UNO_QUERY_THROW);
 
     // get the cursor
     Reference<XTextViewCursor> xViewCursor = xViewCursorSupplier->getViewCursor();
@@ -136,7 +139,7 @@ SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
 
     Reference<XTextCursor> xModelCursor = xDocumentText->createTextCursorByRange(xViewCursor->getStart());
 
-    Reference<XDocumentInsertable> doc(xModelCursor, UNO_QUERY);
+    Reference<XDocumentInsertable> doc(xModelCursor, UNO_QUERY_THROW);
 
     for (; argv[ai]; ai++) {
         static char fileUrl[1024];
@@ -149,7 +152,7 @@ SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
         doc->insertDocumentFromURL(OUString::createFromAscii(fn), Sequence <::com::sun::star::beans::PropertyValue>());
     }
 
-    Reference<XStorable> xStorable(xTextDocument, UNO_QUERY);
+    Reference<XStorable> xStorable(xTextDocument, UNO_QUERY_THROW);
     sprintf(fileUrl, "file://%s", createFileName(outfilename));
     xStorable->storeToURL(OUString::createFromAscii(fileUrl), Sequence <::com::sun::star::beans::PropertyValue>());
     fprintf(stdout, "saved text document - %s\n", fileUrl);
