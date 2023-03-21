@@ -55,11 +55,35 @@ const char *charStr(const OUString s, const char *prefix = "str") {
   return retval;
 }
 
-const char *createFileName(const char *filename) {
+const char *dirname(const char *path) {
   static char retval[BUFSIZ];
   static char pwd[BUFSIZ];
-  if (!strchr(filename, '/')) sprintf(retval, "%s/%s", getcwd(pwd, BUFSIZ), filename);
-  else sprintf(retval, "%s", filename);
+  static char newdir[BUFSIZ];
+  char *s;
+  strcpy(retval, path);
+  s = strrchr(retval, '/');
+  if (s) {
+    char *r1;
+    int r2;
+    *s = 0;
+    r1 = getcwd(pwd, BUFSIZ);
+    r2 = chdir(retval);
+    r1 = getcwd(newdir, BUFSIZ);
+    strcpy(retval, newdir);
+    r2 = chdir(pwd);
+  }
+  return retval;
+}
+
+const char *createFileName(const char *filename) {
+  static char retval[BUFSIZ*2];
+  static char pwd[BUFSIZ];
+  static char newdir[BUFSIZ];
+  char *r1;
+  const char *p;
+  r1 = getcwd(pwd, BUFSIZ);
+  if (!(p = strrchr(filename, '/'))) sprintf(retval, "%s/%s", pwd, filename);
+  else sprintf(retval, "%s/%s", dirname(filename), p+1);
   return retval;
 }
 
@@ -87,9 +111,10 @@ SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
     Reference<XMultiComponentFactory> xServiceManager = xContext->getServiceManager();
     if (xServiceManager.is())
       fprintf(stdout, "remote ServiceManager is available\n");
-    else
+    else {
       fprintf(stdout, "remote ServiceManager is not available\n");
-    fflush(stdout);
+      return -1;
+    }
 
     // Create Desktop object, xDesktop is still a XInterface, need to downcast it.
     Reference<XInterface> xDesktop = xServiceManager->createInstanceWithContext(OUString("com.sun.star.frame.Desktop"), xContext);
