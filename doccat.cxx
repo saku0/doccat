@@ -3,6 +3,8 @@
  * doccat: concatenate text documents from Word and Writer
  *
  * usage: doccat -o output.doc input1.doc input2.doc input3.doc
+ *
+ * Author: Santosh Kumar <mbox.santosh@gmail.com>
 */
 
 #include <stdio.h>
