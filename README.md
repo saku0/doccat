@@ -13,7 +13,7 @@ Now, catenate the files:
   $ ./doccat -o out.doc in1.doc in2.doc in3.doc
 ```
 
-Note: The SDK builds the executable ```./_doccat``` from the sources. This is
-then called by the ```./doccat``` executable which is actually a copy of the
+Note: The SDK actually builds the executable ```./_doccat``` from the sources.
+This is then called by the ```./doccat```executable which is a copy of the
 ```unoapploader``` application (from the SDK). Both files are required in the
 path for the program to work and are included in the sandbox.
