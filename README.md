@@ -1,5 +1,5 @@
 # doccat
-This program allow you to concatenate .doc files using LibreOffice.
+This program allows you to concatenate .doc files using LibreOffice.
 
 If you are not upto compiling the C++ program, I have a prebuilt ```doccat```
 executable for Ubuntu in the sandbox folder.
@@ -13,5 +13,6 @@ Now, catenate the files:
   $ ./doccat -o out.doc in1.doc in2.doc in3.doc
 ```
 
-Note: The ./doccat executable uses ./_doccat which is a copy of the unoapploader
-application (from the SDK). This is also included in the sandbox.
+Note: The ```./doccat``` executable uses ```./_doccat``` which is a copy of the
+```unoapploader``` application (from the SDK). This is also included in the
+sandbox.
