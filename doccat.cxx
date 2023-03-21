@@ -46,7 +46,7 @@ using ::rtl::OString;
 using ::rtl::OUString;
 using ::rtl::OUStringToOString;
 
-const char *charStr(const OUString s, const char *prefix = "str") {
+const char *charStr(const OUString s) {
   static char retval[BUFSIZ];
   OString str;
   s.convertToString(&str, RTL_TEXTENCODING_UTF8, RTL_UNICODETOTEXT_FLAGS_UNDEFINED_ERROR | RTL_UNICODETOTEXT_FLAGS_INVALID_ERROR);
