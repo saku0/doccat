@@ -94,6 +94,7 @@ SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
   char *outfilename = strdup((char *) charStr("out.doc"));
   int ai = 1;
   if (!strcmp(argv[ai], "-o")) {
+    free(outfilename);
     outfilename = argv[++ai];
     ++ai;
   }
