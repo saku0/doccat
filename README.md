@@ -6,7 +6,7 @@ executable for Ubuntu in the sandbox folder.
 
 First run LibreOffice in headless mode:
 ```sh
-  $ soffice.bin --headless --accept=socket,host=127.0.0.1,port=8100,tcpNoDelay=1;urp;
+  $ soffice.bin --headless --accept='socket,host=127.0.0.1,port=8100,tcpNoDelay=1;urp;'
 ```
 Now, catenate the files:
 ```sh

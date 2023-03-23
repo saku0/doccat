@@ -91,7 +91,7 @@ const char *createFileName(const char *filename) {
 SAL_IMPLEMENT_MAIN_WITH_ARGS(argc, argv)
 {
   static char fileUrl[1024];
-  char *outfilename = (char *) charStr("out.doc");
+  char *outfilename = strdup((char *) charStr("out.doc"));
   int ai = 1;
   if (!strcmp(argv[ai], "-o")) {
     outfilename = argv[++ai];
